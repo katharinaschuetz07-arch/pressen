@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Preußische Geschichte Lern-App Premium</title>
+<style>
+body{background:black;color:white;font-family:Arial,sans-serif;margin:0;text-align:center;}
+header{padding:10px;border-bottom:2px solid red;}
+header h3{margin:2px 0;letter-spacing:1px;}
+header .version{font-size:12px;color:#aaa;}
+.container{padding:10px;}
+.menu{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px;}
+.button{background:black;color:white;border:2px solid red;border-radius:25px;padding:10px;font-size:13px;cursor:pointer;transition:0.3s;}
+.button:hover{background:red;color:black;}
+.row{display:flex;gap:8px;margin-top:8px;}
+.row .button{flex:1;}
+.card{border:2px solid red;border-radius:20px;padding:20px;min-height:270px;margin-bottom:10px;position:relative;text-align:left;background:#050505;cursor:pointer;user-select:none;}
+.category{position:absolute;top:10px;left:15px;font-size:11px;color:#ff4444;text-transform:uppercase;font-weight:bold;}
+.king{position:absolute;top:10px;right:15px;font-size:11px;font-style:italic;}
+.title{text-align:center;font-size:20px;margin-top:35px;margin-bottom:15px;border-bottom:1px solid #333;padding-bottom:10px;}
+.counter{position:absolute;bottom:10px;right:15px;font-size:11px;color:#666;}
+.content{font-size:15px;line-height:1.5;overflow-y:auto;max-height:180px;}
+footer{margin-top:10px;padding:10px;border-top:2px solid red;font-size:12px;color:#888;}
+</style>
+</head>
+<body>
+
+<header>
+<h3>PREUẞISCHE GESCHICHTE</h3>
+<div class="version">Version 1.1.7 | Premium Edition</div>
+</header>
+
+<div class="container">
+<div class="menu">
+<button class="button" onclick="loadCategory('askanier')">Askanier</button>
+<button class="button" onclick="loadCategory('wittelsbacher')">Wittelsbacher</button>
+<button class="button" onclick="loadCategory('luxemburger')">Luxemburger</button>
+<button class="button" onclick="loadCategory('hohenzollern')">Hohenzollern</button>
+<button class="button" onclick="loadCategory('koenige')">Könige</button>
+<button class="button" onclick="loadCategory('kaiser')">Deutsche Kaiser</button>
+</div>
+
+<div class="card" id="card" onclick="nextCard()">
+<div class="category" id="card-category">MENÜ</div>
+<div class="king" id="card-king"></div>
+<div class="title" id="card-title">Willkommen</div>
+<div class="content" id="card-content">Tippen Sie auf diese Karte oder wählen Sie eine Epoche oben aus.</div>
+<div class="counter" id="card-counter">1 von 1</div>
+</div>
+
+<div class="row">
+<button class="button" onclick="event.stopPropagation(); prevCard()">◀</button>
+<button class="button" onclick="event.stopPropagation(); speak()">🔊</button>
+<button class="button" onclick="event.stopPropagation(); nextCard()">▶</button>
+</div>
+
+<div class="row">
+<button class="button" onclick="goStart()">Menü</button>
+<button class="button" onclick="startQuiz()">Quiz</button>
+<button class="button" onclick="loadCategory('nebenfiguren')">Nebenfiguren</button>
+</div>
+</div>
+
+<footer>
+&copy; 2026 Lernapp Preußische Geschichte
+</footer>
+
+<script>
+const yearWords={1157:"elfhundertsiebenundfünfzig",1415:"vierzehnhundertfünfzehn",1701:"siebzehnhunderteins",1871:"achtzehnhunderteinundsiebzig",1888:"achtzehnhundertachtundachtzig"};
+function convertYears(text){return text.replace(/\b\d{4}\b/g,match=>yearWords[match]||match);}
+function speak(){let text=document.getElementById("card-title").innerText+". "+document.getElementById("card-content").innerText;let speech=new SpeechSynthesisUtterance(convertYears(text));speech.lang="de-DE";window.speechSynthesis.speak(speech);}
+function goStart(){loadCategory('menu');}
+
+let data={
+menu:[
+{title:"Anfänge der Mark",king:"1134",text:"Albrecht der Bär erhält die Nordmark als Lehen. Dies markiert den eigentlichen Beginn der kontrollierten deutschen Besiedlung und Expansion in den slawischen Gebieten östlich der Elbe."},
+{title:"Gründung Brandenburgs",king:"1157",text:"Nach der endgültigen Eroberung der Brandenburg von den slawischen Hevellern nennt sich Albrecht erstmals 'Markgraf von Brandenburg'. Die Mark wird fester Bestandteil des Heiligen Römischen Reiches."},
+{title:"Askanische Blüte",king:"1200-1300",text:"Unter den Nachfolgern Albrechts dehnt sich die Mark weit nach Osten aus. Städte wie Berlin und Cölln entstehen und bilden die wirtschaftliche Basis für den wachsenden Einfluss der Region."},
+{title:"Das Ende der Askanier",king:"1320",text:"Mit dem Tod Heinrichs des Jüngeren sterben die Askanier in der Hauptlinie aus. Die Mark Brandenburg verfällt in eine Phase der politischen Instabilität und wird zum Spielball der europäischen Mächte."},
+{title:"Wittelsbacher Zeit",king:"1323",text:"Kaiser Ludwig der Bayer überträgt die Mark seinem Sohn. Die bayerische Herrschaft bleibt jedoch fremd und ist von Konflikten mit dem lokalen Adel und finanzieller Ausbeutung geprägt."},
+{title:"Die Goldene Bulle",king:"1356",text:"In diesem wichtigen Reichsgesetz wird Brandenburg offiziell als Kurfürstentum bestätigt. Der Markgraf gehört fortan zum exklusiven Kreis der sieben Fürsten, die den deutschen König wählen dürfen."},
+{title:"Luxemburger Episode",king:"1373",text:"Kaiser Karl IV. aus dem Haus Luxemburg erwirbt die Mark. Er will sie als Hausmacht für seine Familie sichern, doch seine Nachfolger vernachlässigen das Land und verpfänden es mehrfach."},
+{title:"Einzug der Hohenzollern",king:"1411/1415",text:"Friedrich VI. von Hohenzollern, Burggraf von Nürnberg, wird zunächst Verwalter und dann Kurfürst von Brandenburg. Er beendet das Chaos des 'Raubrittertums' und beginnt den Aufbau eines Zentralstaates."},
+{title:"Dispositio Achillea",king:"1473",text:"Albrecht Achilles legt fest, dass die Mark Brandenburg unteilbar ist. Dies verhindert die Zersplitterung des Territoriums und sichert die langfristige Machtbasis der Hohenzollern-Dynastie."},
+{title:"Die Reformation",king:"1539",text:"Kurfürst Joachim II. tritt zum lutherischen Glauben über. Die Säkularisierung der Kirchengüter stärkt die fürstliche Macht und verändert die kulturelle sowie soziale Landschaft der Mark nachhaltig."},
+{title:"Personalunion mit Preußen",king:"1618",text:"Die brandenburgischen Hohenzollern erben das Herzogtum Preußen. Es entsteht der Staat Brandenburg-Preußen, der jedoch geografisch getrennt ist und im 30-jährigen Krieg schwer verwüstet wird."},
+{title:"Der Große Kurfürst",king:"1640-1688",text:"Friedrich Wilhelm übernimmt ein zerstörtes Land. Durch geschickte Diplomatie, den Aufbau eines stehenden Heeres und die Förderung von Einwanderern (Hugenotten) macht er Preußen zur europäischen Macht."},
+{title:"Edikt von Potsdam",king:"1685",text:"Nach der Aufhebung der Religionsfreiheit in Frankreich lädt der Große Kurfürst die Hugenotten nach Brandenburg ein. Über 20.000 Flüchtlinge bringen Handwerk, Wissen und wirtschaftlichen Aufschwung."},
+{title:"Königskrönung",king:"1701",text:"Friedrich III. krönt sich in Königsberg zum König Friedrich I. 'in' Preußen. Damit steigt der Staat in den Rang der europäischen Königreiche auf und gewinnt massiv an Prestige."},
+{title:"Der Soldatenkönig",king:"1713-1740",text:"Friedrich Wilhelm I. konzentriert sich völlig auf Militär und Verwaltung. Er schafft ein effizientes Beamtentum und ein riesiges Heer, führt aber kaum Kriege und hinterlässt volle Staatskassen."},
+{title:"Friedrich der Große",king:"1740-1786",text:"Friedrich II. erobert Schlesien und übersteht den Siebenjährigen Krieg gegen eine Übermacht. Preußen wird zur fünften Großmacht in Europa und zum Zentrum der Aufklärung unter dem 'Philosophen von Sanssouci'."}
+],
+askanier:[
+{title:"Albrecht der Bär",king:"1157",text:"Begründer der Mark Brandenburg. Er kämpfte gegen die Slawen und holte erste Siedler ins Land, um das Sumpfgebiet urbar zu machen und wirtschaftlich zu nutzen."},
+{title:"Otto I.",king:"1170",text:"Sohn Albrechts. Er gründete das Kloster Lehnin, das zum geistigen und wirtschaftlichen Zentrum der Mark wurde und die askanische Herrschaft tief im Land verwurzelte."},
+{title:"Otto II.",king:"1184",text:"Setzte die Expansionspolitik seines Vaters fort und sicherte die Gebiete gegen dänische Einflüsse. Er förderte den Bau von Burgen zum Schutz der Handelswege."},
+{title:"Albrecht II.",king:"1205",text:"Kämpfte um die Vorherrschaft an der Elbe und festigte die Grenzen nach Norden. Er war maßgeblich an der Sicherung der Oberlehnsherrschaft über Pommern beteiligt."},
+{title:"Johann I. & Otto III.",king:"1220",text:"Brüderregentschaft. In ihre Zeit fällt der massive Ausbau von Städten wie Berlin, Spandau und Frankfurt (Oder). Die Mark erlebte eine wirtschaftliche Blütezeit."},
+{title:"Johann II.",king:"1266",text:"Regierte nach der Teilung der Mark die Linie Stendal. Er förderte die Klöster und sicherte den inneren Frieden durch eine geregelte Rechtsprechung in den Städten."},
+{title:"Otto IV. (mit dem Pfeil)",king:"1266-1308",text:"Ein ritterlicher Fürst und Minnesänger. Er erwarb die Neumark und Teile der Lausitz. Sein Beiname rührt von einer Pfeilspitze her, die jahrelang in seinem Kopf steckte."},
+{title:"Konrad I.",king:"1266",text:"Mitregent in der johanneischen Linie. Er konzentrierte sich auf die Verwaltung der östlichen Gebiete und den Schutz gegen polnische Übergriffe."},
+{title:"Waldemar der Große",king:"1308-1319",text:"Der letzte bedeutende Askanier. Er führte Preußen zu einer enormen Ausdehnung, starb jedoch kinderlos, was das Ende der Dynastie und Chaos in der Mark einleitete."},
+{title:"Heinrich das Kind",king:"1319-1320",text:"Der letzte Askanier. Er starb mit nur 11 Jahren. Mit ihm erlosch das Geschlecht im Mannesstamm, woraufhin die Mark als 'erledigtes Lehen' an das Reich zurückfiel."},
+{title:"Städtegründungen",king:"1250",text:"Die Askanier schufen über 100 Städte nach deutschem Recht. Diese bildeten das Rückgrat der Verwaltung und machten die Mark zu einem modernen Wirtschaftsraum des Mittelalters."},
+{title:"Die Askanier-Burgen",king:"1200",text:"Überall in der Mark entstanden massive Feldsteinburgen. Sie dienten nicht nur dem Militär, sondern waren Symbole der neuen, festen Herrschaft über das weite Land."}
+],
+wittelsbacher:[
+{title:"Ludwig V. (der Brandenburger)",king:"1323-1351",text:"Vom Vater als Kind zum Markgrafen ernannt. Er kämpfte zeitlebens gegen den Widerstand des märkischen Adels und den 'Falschen Waldemar', einen Hochstapler."},
+{title:"Ludwig VI. (der Römer)",king:"1351-1365",text:"Erster Wittelsbacher mit Kurfürstentitel. Er versuchte die Verwaltung zu reformieren, scheiterte aber an der immensen Schuldenlast des Landes."},
+{title:"Otto VII. (der Faule)",king:"1365-1373",text:"Sein Beiname spiegelt sein Desinteresse an der Regierung wider. Er verkaufte die Mark schließlich an Karl IV., um sein luxuriöses Leben in Prag zu finanzieren."},
+{title:"Der Falsche Waldemar",king:"1348",text:"Ein Hochstapler gab sich als der verstorbene Askanier Waldemar aus. Fast alle märkischen Städte fielen von den Wittelsbachern ab, was das Land an den Rand des Ruins trieb."},
+{title:"Hungersnöte",king:"1340",text:"Unter den Wittelsbachern litt die Mark unter schweren Ernteausfällen. Die fehlende Fürsorge der fernen bayerischen Herrscher führte zu großer Armut in der Bevölkerung."},
+{title:"Märkischer Adel",king:"1350",text:"Die Adelsgeschlechter wie die Quitzows nutzten die Schwäche der Wittelsbacher aus. Sie bauten ihre eigenen Burgen zu Raubritternestern aus und terrorisierten das Land."},
+{title:"Finanzkrise",king:"1360",text:"Die bayerischen Herrscher nutzten Brandenburg oft nur als Geldquelle für ihre Kriege im Süden. Die Mark verarmte und die Infrastruktur verfiel zusehends."},
+{title:"Verlust der Neumark",king:"1370",text:"Aufgrund akuten Geldmangels mussten Teile der Mark verpfändet werden. Dies schwächte die geopolitische Lage Brandenburgs im Osten erheblich."},
+{title:"Spannung mit der Kirche",king:"1330",text:"Die Wittelsbacher lagen oft im Clinch mit dem Papst. Die Mark wurde zeitweise mit dem Interdikt belegt, was das gottesdienstliche Leben fast völlig zum Erliegen brachte."},
+{title:"Kultureller Stillstand",king:"1350",text:"Im Gegensatz zu den Askaniern förderten die Wittelsbacher kaum Kunst oder Bildung in der Mark. Die Region blieb im Vergleich zum restlichen Reich kulturell zurück."},
+{title:"Widerstand der Städte",king:"1345",text:"Städte wie Berlin schlossen Bündnisse gegen die Wittelsbacher Steuern. Es kam zu Aufständen, die nur mühsam und mit Gewalt niedergeschlagen werden konnten."},
+{title:"Das Ende der Bayern",king:"1373",text:"Der Vertrag von Fürstenwalde besiegelte das Ende der Wittelsbacher Herrschaft. Die Mark ging für 500.000 Gulden an das Haus Luxemburg über."}
+],
+luxemburger:[
+{title:"Karl IV.",king:"1373-1378",text:"Kaiser und genialer Stratege. Er wollte Brandenburg als Nordpfeiler seiner Macht. Er investierte in die Schifffahrt und förderte den Handel auf der Elbe und Havel."},
+{title:"Wenzel der Faule",king:"1378-1388",text:"Sohn Karls. Er interessierte sich kaum für die Mark und überließ die Verwaltung unfähigen Beamten, was die Raubritter wieder erstarken ließ."},
+{title:"Sigismund",king:"1388-1411",text:"Späterer Kaiser. Er sah Brandenburg nur als finanzielle Reserve. Er verpfändete die Mark mehrfach, bevor er sie endgültig an Friedrich von Hohenzollern übergab."},
+{title:"Jobst von Mähren",king:"1388-1411",text:"Ein Neffe Karls IV., der die Mark als Pfandbesitz hielt. Unter seiner Herrschaft erreichte die Gesetzlosigkeit durch Raubritter ihren absoluten Höhepunkt."},
+{title:"Die Quitzows",king:"1400",text:"Das mächtigste Adelsgeschlecht unter den Luxemburgern. Sie kontrollierten weite Teile der Mark und forderten die Kurfürsten offen heraus."},
+{title:"Tangermünde",king:"1375",text:"Karl IV. machte Tangermünde zu seiner Nebenresidenz und plante, sie zur Hauptstadt im Norden auszubauen. Die Stadt erlebte eine kurze, glanzvolle Blüte."},
+{title:"Landbuch Karls IV.",king:"1375",text:"Eine detaillierte Bestandsaufnahme aller Besitzungen in der Mark. Es ist heute eine der wichtigsten Quellen zur mittelalterlichen Geschichte Brandenburgs."},
+{title:"Verfall der Ordnung",king:"1405",text:"Wegen der ständigen Abwesenheit der Luxemburger gab es keine zentrale Justiz mehr. Fehden zwischen Adligen verwüsteten das flache Land fast jährlich."},
+{title:"Finanzielle Ausbeutung",king:"1390",text:"Die Luxemburger pressten die märkischen Städte für ihre imperialen Träume in Böhmen aus. Dies führte zu einer tiefen Entfremdung zwischen Volk und Herrschern."},
+{title:"Die Hussitenkriege",king:"1410",text:"Die Unruhen in Böhmen unter den Luxemburgern strahlten bis in die Mark aus. Die Grenzgebiete mussten ständig gegen plündernde Banden verteidigt werden."},
+{title:"Handelshemmnisse",king:"1400",text:"Durch die ständigen Zölle der Raubritter kam der Fernhandel zum Erliegen. Die Hanse mied die märkischen Routen, was die Städte wirtschaftlich isolierte."},
+{title:"Die Entscheidung 1411",king:"1411",text:"Sigismund brauchte Geld für seine Wahl zum deutschen König. Er ernannte Friedrich von Hohenzollern zum 'Hauptmann' der Mark – der Wendepunkt der Geschichte."}
+],
+hohenzollern:[
+{title:"Friedrich I.",king:"1415",text:"Er brach den Widerstand der Quitzows mit der 'Faulen Grete' (einer schweren Kanone). Damit begann die Ära des staatlichen Gewaltmonopols in Brandenburg."},
+{title:"Friedrich II. (Eisenzahn)",king:"1440",text:"Er zwang Berlin und Cölln zur Aufgabe ihrer Privilegien und baute das erste Schloss. Sein Beiname steht für seine unerbittliche Durchsetzungskraft."},
+{title:"Albrecht Achilles",king:"1470",text:"Ein großer Krieger und Diplomat. Mit der 'Dispositio Achillea' sicherte er für Jahrhunderte die Einheit der markbrandenburgischen Stammlande."},
+{title:"Joachim I. Nestor",king:"1499",text:"Ein strenger Verfechter des Rechts. Er gründete die Universität Frankfurt (Oder) und das Kammergericht, um Preußen geistig und rechtlich zu modernisieren."},
+{title:"Joachim II. Hector",king:"1535",text:"Er führte die Reformation ein und baute das Jagdschloss Grunewald. Sein prunkvoller Lebensstil führte allerdings zu einer enormen Staatsverschuldung."},
+{title:"Johann Georg",king:"1571",text:"Der 'Oeconomus'. Er sanierte die zerrütteten Finanzen seines Vorgängers und führte eine sparsame, effiziente Verwaltung ein, die dem Land Stabilität brachte."},
+{title:"Joachim Friedrich",king:"1598",text:"Er gründete das Joachimsthalsche Gymnasium und setzte sich für die Bildung des Adels ein. Zudem förderte er erste industrielle Ansätze in der Metallverarbeitung."},
+{title:"Johann Sigismund",king:"1608",text:"Er trat zum Calvinismus über, was Spannungen im lutherischen Land auslöste. Er erwarb durch Erbschaft das Herzogtum Preußen und das Klever Erbe am Rhein."},
+{title:"Georg Wilhelm",king:"1619",text:"Regierte während des 30-jährigen Krieges. Er war den Ereignissen kaum gewachsen; die Mark wurde zum Schauplatz verheerender Schlachten und Plünderungen."},
+{title:"Friedrich Wilhelm",king:"1640",text:"Der Große Kurfürst. Er schuf Preußen als moderne Militärmacht, baute den Friedrich-Wilhelm-Kanal und förderte die religiöse Toleranz für Einwanderer."},
+{title:"Friedrich III.",king:"1688",text:"Ein Förderer der Künste und Wissenschaften. Unter ihm wurde Berlin zu einem Zentrum des Barock. Sein Ziel war die Erhebung Preußens zum Königreich."},
+{title:"Stammburg Hohenzollern",king:"1061",text:"Ursprünglich aus Schwaben stammend, brachten die Hohenzollern eine neue, disziplinierte Herrschaftskultur in den Norden, die Preußen für immer prägen sollte."}
+],
+koenige:[
+{title:"Friedrich I.",king:"1701",text:"Durch seine prachtvolle Krönung in Königsberg sicherte er Preußen einen Platz am Tisch der europäischen Mächte. Er gründete die Akademie der Künste."},
+{title:"Friedrich Wilhelm I.",king:"1713",text:"Der 'Soldatenkönig'. Er disziplinierte das Land, führte die allgemeine Schulpflicht ein und schuf das 'Potsdamer Riesengarde'-Regiment als Symbol seiner Macht."},
+{title:"Friedrich II. (Der Große)",king:"1740",text:"Erfolgreicher Feldherr und aufgeklärter Monarch. Er schaffte die Folter ab, förderte die Kartoffel und machte Preußen zu einem modernen Rechtsstaat."},
+{title:"Friedrich Wilhelm II.",king:"1786",text:"Ein Liebhaber der Künste und des Okkultismus. Unter ihm wurde das Brandenburger Tor gebaut, doch die Staatsfinanzen litten unter seinem ausschweifenden Stil."},
+{title:"Friedrich Wilhelm III.",king:"1797",text:"Regierte während der Niederlage gegen Napoleon. Dank seiner Frau Luise und Reformern wie Stein und Hardenberg wurde Preußen grundlegend modernisiert."},
+{title:"Friedrich Wilhelm IV.",king:"1840",text:"Der 'Romantiker auf dem Thron'. Er förderte den Bau des Kölner Doms, scheiterte aber an der Revolution von 1848 und lehnte die Kaiserkrone ab."},
+{title:"Wilhelm I.",king:"1861",text:"Unter seiner Herrschaft und dank Bismarcks Politik wurde Preußen zur Führungsmacht in Deutschland. Er war bescheiden, aber fest in seinen militärischen Werten."},
+{title:"Schlacht bei Leuthen",king:"1757",text:"Einer der genialsten Siege Friedrichs des Großen gegen die Österreicher. Er sicherte damit den Verbleib Schlesiens bei Preußen und seinen militärischen Ruhm."},
+{title:"Die Reformzeit",king:"1807",text:"Nach der Niederlage bei Jena und Auerstedt wurde Preußen durch die Bauernbefreiung und die Heeresreform von Scharnhorst zu einem dynamischen Staat."},
+{title:"Wiener Kongress",king:"1815",text:"Preußen erhielt große Gebiete im Westen (Rheinland und Westfalen). Dies machte es zum Wächter am Rhein und zur industriellen Herzkammer Deutschlands."},
+{title:"Preußischer Zollverein",king:"1834",text:"Durch die Schaffung eines einheitlichen Wirtschaftsraums ohne Binnenzölle sicherte sich Preußen die wirtschaftliche Vorherrschaft über die anderen deutschen Staaten."},
+{title:"Königgrätz",king:"1866",text:"Der entscheidende Sieg über Österreich. Preußen wurde damit zur alleinigen Führungsmacht in Deutschland und bereitete die Reichsgründung von 1871 vor."}
+],
+kaiser:[
+{title:"Wilhelm I. (Kaiser)",king:"1871",text:"Im Spiegelsaal von Versailles zum Deutschen Kaiser proklamiert. Er blieb im Herzen Preuße und sah das Kaisertum eher als Pflicht denn als Ehre an."},
+{title:"Friedrich III.",king:"1888",text:"Der '99-Tage-Kaiser'. Er war schwer krebskrank und konnte seine liberalen Reformpläne für Deutschland nicht mehr umsetzen. Ein tragisches Kapitel."},
+{title:"Wilhelm II.",king:"1888",text:"Der letzte Kaiser. Seine impulsive Außenpolitik und das Streben nach einem 'Platz an der Sonne' führten zur Isolierung Deutschlands und zum Ersten Weltkrieg."},
+{title:"Otto von Bismarck",king:"1871",text:"Der Architekt des Reiches. Als preußischer Ministerpräsident und Reichskanzler prägte er die europäische Diplomatie über Jahrzehnte durch sein Bündnissystem."},
+{title:"Reichsgründung",king:"1871",text:"Nach dem Sieg über Frankreich entstand ein deutscher Nationalstaat unter preußischer Führung. Berlin wurde zur rasant wachsenden Weltmetropole."},
+{title:"Kulturkampf",king:"1870",text:"Bismarcks Konflikt mit der katholischen Kirche. Er wollte den Einfluss des Vatikans auf den preußischen Staat begrenzen und die Zivilehe einführen."},
+{title:"Sozialistengesetze",king:"1878",text:"Ein Versuch Bismarcks, die aufkommende Arbeiterbewegung zu unterdrücken. Gleichzeitig führte er weltweit wegweisende Sozialversicherungen ein."},
+{title:"Das Dreikaiserjahr",king:"1888",text:"Innerhalb weniger Monate regierten drei Kaiser das Reich. Dieser schnelle Wechsel markierte das Ende des alten Preußens und den Beginn der Ära Wilhelm II."},
+{title:"Flottenbau",king:"1900",text:"Unter Wilhelm II. rüstete Preußen massiv zur See auf. Dies führte zum Wettrüsten mit Großbritannien und verschärfte die internationalen Spannungen massiv."},
+{title:"Zitadelle Spandau",king:"1871",text:"Hier wurde der Reichskriegsschatz aus französischen Goldentschädigungen gelagert. Ein Symbol für die wirtschaftliche Stärke des neuen Kaiserreiches."},
+{title:"Preußischer Landtag",king:"1900",text:"Trotz der Reichsgründung blieb das preußische Drei-Klassen-Wahlrecht bestehen. Dies führte zu ständigen politischen Spannungen mit dem demokratischeren Reichstag."},
+{title:"Abdankung",king:"1918",text:"Nach der Niederlage im Ersten Weltkrieg musste Wilhelm II. abdanken. Damit endete die über 500-jährige Herrschaft der Hohenzollern in Preußen."}
+],
+nebenfiguren:[
+{title:"Freiherr vom Stein",king:"1807",text:"Ein genialer Reformer. Er beendete die Leibeigenschaft der Bauern und ebnete den Weg für die kommunale Selbstverwaltung in preußischen Städten."},
+{title:"Karl August von Hardenberg",king:"1810",text:"Staatskanzler, der Steins Reformen fortführte. Er modernisierte die Wirtschaft durch Gewerbefreiheit und schuf ein effizientes Steuersystem."},
+{title:"Gerhard von Scharnhorst",king:"1808",text:"Der Reorganisator der Armee. Er führte das Volksheer ein und schaffte die grausamen Prügelstrafen in der preußischen Armee ab."},
+{title:"August Neidhardt von Gneisenau",king:"1813",text:"Ein brillanter Stratege. Er war maßgeblich am Sieg über Napoleon bei Waterloo beteiligt und prägte den preußischen Generalstab."},
+{title:"Wilhelm von Humboldt",king:"1809",text:"Gründer der Berliner Universität. Er schuf das neuhumanistische Bildungsideal, das Preußen weltweit zum Vorbild für das Schulwesen machte."},
+{title:"Karl Friedrich Schinkel",king:"1820",text:"Der Architekt Preußens. Er prägte mit seinen klassizistischen Bauten (Altes Museum, Schauspielhaus) das Gesicht des 'Spree-Athens' Berlin."},
+{title:"Christian Peter Wilhelm Beuth",king:"1830",text:"Der Vater der preußischen Industrialisierung. Er förderte Gewerbe und Technik und brachte moderne Maschinen aus England nach Preußen."},
+{title:"Albrecht von Roon",king:"1860",text:"Kriegsminister unter Wilhelm I. Er setzte die Heeresreform gegen den Widerstand des Parlaments durch und schuf die Basis für die Einigungskriege."},
+{title:"Helmuth von Moltke",king:"1866",text:"Das militärische Genie hinter den Siegen von 1866 und 1870. Er revolutionierte die Kriegsführung durch die Nutzung von Eisenbahn und Telegrafie."},
+{title:"Adolph von Menzel",king:"1850",text:"Der Maler der preußischen Geschichte. Seine Bilder von Friedrich dem Großen prägten das visuelle Gedächtnis der Nation bis heute."},
+{title:"Luise Henriette von Oranien",king:"1646",text:"Ehefrau des Großen Kurfürsten. Sie brachte die niederländische Kultur nach Brandenburg und gründete das Schloss Oranienburg."},
+{title:"Gottfried Wilhelm Leibniz",king:"1700",text:"Der erste Präsident der Preußischen Akademie der Wissenschaften. Er war einer der bedeutendsten Denker seiner Zeit und beriet Friedrich I."}
+]
+};
+
+let currentCategory='menu', index=0, quizActive=false;
+
+function loadCategory(cat){
+    quizActive=false; 
+    currentCategory=cat; 
+    index=0; 
+    showCard();
+}
+
+function showCard(){
+    let item=data[currentCategory][index];
+    document.getElementById("card-category").innerText=currentCategory.toUpperCase();
+    document.getElementById("card-king").innerText=item.king||"";
+    document.getElementById("card-title").innerText=item.title;
+    document.getElementById("card-content").innerHTML=item.text;
+    document.getElementById("card-counter").innerText=(index+1)+" von "+data[currentCategory].length;
+}
+
+function nextCard(){
+    if(quizActive) return; 
+    index++; 
+    if(index>=data[currentCategory].length) index=0; 
+    showCard();
+}
+
+function prevCard(){
+    if(quizActive) return; 
+    index--; 
+    if(index<0) index=data[currentCategory].length-1; 
+    showCard();
+}
+
+// Quiz-Bereich (Erweitert auf 20 Fragen)
+let quiz=[
+    {q:"In welchem Jahr wurde die Mark Brandenburg gegründet?",a:["1134","1157","1201"],c:1},
+    {q:"Wer war der erste askanische Markgraf?",a:["Otto I.","Waldemar","Albrecht der Bär"],c:2},
+    {q:"Welche Dynastie folgte auf die Askanier?",a:["Hohenzollern","Wittelsbacher","Luxemburger"],c:1},
+    {q:"Wann wurde Brandenburg Kurfürstentum?",a:["1356","1415","1701"],c:0},
+    {q:"Wer brachte die 'Faule Grete' zum Einsatz?",a:["Friedrich I.","Bismarck","Kaiser Wilhelm"],c:0},
+    {q:"Wer war der 'Soldatenkönig'?",a:["Friedrich II.","Friedrich Wilhelm I.","Wilhelm II."],c:1},
+    {q:"In welchem Jahr wurde Friedrich I. zum König gekrönt?",a:["1688","1701","1713"],c:1},
+    {q:"Wer baute das Schloss Sanssouci?",a:["Friedrich I.","Friedrich II.","Wilhelm I."],c:1},
+    {q:"Welche Königin wurde zum Symbol gegen Napoleon?",a:["Luise","Sophie Charlotte","Augusta"],c:0},
+    {q:"Wer führte die preußischen Bildungsreformen an?",a:["Stein","Humboldt","Gneisenau"],c:1},
+    {q:"Welche Schlacht besiegelte 1866 Preußens Vorherrschaft?",a:["Leipzig","Waterloo","Königgrätz"],c:2},
+    {q:"Wo wurde das Deutsche Kaiserreich 1871 ausgerufen?",a:["Berlin","Versailles","Potsdam"],c:1},
+    {q:"Wer war der 'Eiserne Kanzler'?",a:["Moltke","Bismarck","Roon"],c:1},
+    {q:"Wie viele Tage regierte Friedrich III.?",a:["99","150","365"],c:0},
+    {q:"Wann dankte der letzte Kaiser ab?",a:["1871","1914","1918"],c:2},
+    {q:"Welche Stadt war die Residenz von Karl IV.?",a:["Berlin","Tangermünde","Potsdam"],c:1},
+    {q:"Wer erließ das Edikt von Potsdam?",a:["Großer Kurfürst","Friedrich II.","Bismarck"],c:0},
+    {q:"Welches Land erwarb Friedrich II. 1740?",a:["Sachsen","Schlesien","Bayern"],c:1},
+    {q:"Welche Reform beendete die Leibeigenschaft?",a:["Heeresreform","Bauernbefreiung","Städteordnung"],c:1},
+    {q:"Wer war der letzte askanische Markgraf?",a:["Waldemar","Heinrich das Kind","Johann I."],c:1}
+];
+
+let qIndex=0, correct=0;
+function startQuiz(){quizActive=true; qIndex=0; correct=0; showQuiz();}
+function showQuiz(){
+    let q=quiz[qIndex];
+    document.getElementById("card-category").innerText="QUIZ";
+    document.getElementById("card-king").innerText="";
+    document.getElementById("card-title").innerText=q.q;
+    let html="";
+    for(let i=0;i<q.a.length;i++) html+="<button class='button' style='width:100%;margin-bottom:8px;' onclick='answer("+i+", event)'>"+q.a[i]+"</button>";
+    document.getElementById("card-content").innerHTML=html;
+    document.getElementById("card-counter").innerText=(qIndex+1)+" von "+quiz.length;
+}
+function answer(i, e){
+    e.stopPropagation();
+    if(i===quiz[qIndex].c) correct++;
+    qIndex++;
+    if(qIndex>=quiz.length){
+        document.getElementById("card-title").innerText="Ergebnis";
+        document.getElementById("card-content").innerHTML="Sie haben "+correct+" von "+quiz.length+" Fragen richtig beantwortet.<br><br>Tippen Sie auf 'Menü', um neu zu starten.";
+        quizActive=false;
+    } else {showQuiz();}
+}
+</script>
+</body>
+</html>
